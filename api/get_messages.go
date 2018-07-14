@@ -2,8 +2,6 @@ package api
 
 import (
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func GetMessages(chatId int, since time.Time) ([]Message, error) {
