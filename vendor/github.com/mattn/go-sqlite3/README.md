@@ -11,10 +11,9 @@ go-sqlite3
 sqlite3 driver conforming to the built-in database/sql interface
 
 Supported Golang version:
+- 1.8.x
 - 1.9.x
 - 1.10.x
-
-[This package follows the official Golang Release Policy.](https://golang.org/doc/devel/release.html#policy)
 
 ### Overview
 
@@ -34,11 +33,6 @@ Supported Golang version:
   - [Mac OSX](#mac-osx)
   - [Windows](#windows)
   - [Errors](#errors)
-- [User Authentication](#user-authentication)
-  - [Compile](#compile)
-  - [Usage](#usage)
-- [Extensions](#extensions)
-  - [Spatialite](#spatialite)
 - [FAQ](#faq)
 - [License](#license)
 
@@ -80,30 +74,18 @@ Boolean values can be one of:
 
 | Name | Key | Value(s) | Description |
 |------|-----|----------|-------------|
-| UA - Create | `_auth` | - | Create User Authentication, for more information see [User Authentication](#user-authentication) |
-| UA - Username | `_auth_user` | `string` | Username for User Authentication, for more information see [User Authentication](#user-authentication) |
-| UA - Password | `_auth_pass` | `string` | Password for User Authentication, for more information see [User Authentication](#user-authentication) |
-| UA - Crypt | `_auth_crypt` | <ul><li>SHA1</li><li>SSHA1</li><li>SHA256</li><li>SSHA256</li><li>SHA384</li><li>SSHA384</li><li>SHA512</li><li>SSHA512</li></ul> | Password encoder to use for User Authentication, for more information see [User Authentication](#user-authentication) |
-| UA - Salt | `_auth_salt` | `string` | Salt to use if the configure password encoder requires a salt, for User Authentication, for more information see [User Authentication](#user-authentication) |
-| Auto Vacuum | `_auto_vacuum` \| `_vacuum` | <ul><li>`0` \| `none`</li><li>`1` \| `full`</li><li>`2` \| `incremental`</li></ul> | For more information see [PRAGMA auto_vacuum](https://www.sqlite.org/pragma.html#pragma_auto_vacuum) |
+| Auto Vacuum | `_vacuum` | <ul><li>`0` \| `none`</li><li>`1` \| `full`</li><li>`2` \| `incremental`</li></ul> | For more information see [PRAGMA auto_vacuum](https://www.sqlite.org/pragma.html#pragma_auto_vacuum) |
 | Busy Timeout | `_busy_timeout` \| `_timeout` | `int` | Specify value for sqlite3_busy_timeout. For more information see [PRAGMA busy_timeout](https://www.sqlite.org/pragma.html#pragma_busy_timeout) |
-| Case Sensitive LIKE | `_case_sensitive_like` \| `_cslike` | `boolean` | For more information see [PRAGMA case_sensitive_like](https://www.sqlite.org/pragma.html#pragma_case_sensitive_like) |
+| Case Sensitive LIKE | `_cslike` | `boolean` | For more information see [PRAGMA case_sensitive_like](https://www.sqlite.org/pragma.html#pragma_case_sensitive_like) |
 | Defer Foreign Keys | `_defer_foreign_keys` \| `_defer_fk` | `boolean` | For more information see [PRAGMA defer_foreign_keys](https://www.sqlite.org/pragma.html#pragma_defer_foreign_keys) |
 | Foreign Keys | `_foreign_keys` \| `_fk` | `boolean` | For more information see [PRAGMA foreign_keys](https://www.sqlite.org/pragma.html#pragma_foreign_keys) |
 | Ignore CHECK Constraints | `_ignore_check_constraints` | `boolean` | For more information see [PRAGMA ignore_check_constraints](https://www.sqlite.org/pragma.html#pragma_ignore_check_constraints) |
-| Immutable | `immutable` | `boolean` | For more information see [Immutable](https://www.sqlite.org/c3ref/open.html) |
-| Journal Mode | `_journal_mode` \| `_journal` | <ul><li>DELETE</li><li>TRUNCATE</li><li>PERSIST</li><li>MEMORY</li><li>WAL</li><li>OFF</li></ul> | For more information see [PRAGMA journal_mode](https://www.sqlite.org/pragma.html#pragma_journal_mode) |
-| Locking Mode | `_locking_mode` \| `_locking` | <ul><li>NORMAL</li><li>EXCLUSIVE</li></ul> | For more information see [PRAGMA locking_mode](https://www.sqlite.org/pragma.html#pragma_locking_mode) |
 | Mode | `mode` | <ul><li>ro</li><li>rw</li><li>rwc</li><li>memory</li></ul> | Access Mode of the database. For more information see [SQLite Open](https://www.sqlite.org/c3ref/open.html) |
 | Mutex Locking | `_mutex` | <ul><li>no</li><li>full</li></ul> | Specify mutex mode. |
-| Query Only | `_query_only` | `boolean` | For more information see [PRAGMA query_only](https://www.sqlite.org/pragma.html#pragma_query_only) |
 | Recursive Triggers | `_recursive_triggers` \| `_rt` | `boolean` | For more information see [PRAGMA recursive_triggers](https://www.sqlite.org/pragma.html#pragma_recursive_triggers) |
-| Secure Delete | `_secure_delete` | `boolean` \| `FAST` | For more information see [PRAGMA secure_delete](https://www.sqlite.org/pragma.html#pragma_secure_delete) |
 | Shared-Cache Mode | `cache` | <ul><li>shared</li><li>private</li></ul> | Set cache mode for more information see [sqlite.org](https://www.sqlite.org/sharedcache.html) |
-| Synchronous | `_synchronous` \| `_sync` | <ul><li>0 \| OFF</li><li>1 \| NORMAL</li><li>2 \| FULL</li><li>3 \| EXTRA</li></ul> | For more information see [PRAGMA synchronous](https://www.sqlite.org/pragma.html#pragma_synchronous) |
 | Time Zone Location | `_loc` | auto | Specify location of time format. |
 | Transaction Lock | `_txlock` | <ul><li>immediate</li><li>deferred</li><li>exclusive</li></ul> | Specify locking behavior for transactions. |
-| Writable Schema | `_writable_schema` | `Boolean` | When this pragma is on, the SQLITE_MASTER tables in which database can be changed using ordinary UPDATE, INSERT, and DELETE statements. Warning: misuse of this pragma can easily result in a corrupt database file. |
 
 ## DSN Examples
 
@@ -151,9 +133,7 @@ go build --tags "icu json1 fts5 secure_delete"
 | Introspect PRAGMAS | sqlite_introspect | This option adds some extra PRAGMA statements. <ul><li>PRAGMA function_list</li><li>PRAGMA module_list</li><li>PRAGMA pragma_list</li></ul> |
 | JSON SQL Functions | sqlite_json | When this option is defined in the amalgamation, the JSON SQL functions are added to the build automatically |
 | Secure Delete | sqlite_secure_delete | This compile-time option changes the default setting of the secure_delete pragma.<br><br>When this option is not used, secure_delete defaults to off. When this option is present, secure_delete defaults to on.<br><br>The secure_delete setting causes deleted content to be overwritten with zeros. There is a small performance penalty since additional I/O must occur.<br><br>On the other hand, secure_delete can prevent fragments of sensitive information from lingering in unused parts of the database file after it has been deleted. See the documentation on the secure_delete pragma for additional information |
-| Secure Delete (FAST) | sqlite_secure_delete_fast | For more information see [PRAGMA secure_delete](https://www.sqlite.org/pragma.html#pragma_secure_delete) |
 | Tracing / Debug | sqlite_trace | Activate trace functions |
-| User Authentication | sqlite_userauth | SQLite User Authentication see [User Authentication](#user-authentication) for more information. |
 
 # Compilation
 
@@ -313,126 +293,6 @@ For example the TDM-GCC Toolchain can be found [here](ttps://sourceforge.net/pro
     go install github.com/mattn/go-sqlite3
     ```
 
-# User Authentication
-
-This package supports the SQLite User Authentication module.
-
-## Compile
-
-To use the User authentication module the package has to be compiled with the tag `sqlite_userauth`. See [Features](#features).
-
-## Usage
-
-### Create protected database
-
-To create a database protected by user authentication provide the following argument to the connection string `_auth`.
-This will enable user authentication within the database. This option however requires two additional arguments:
-
-- `_auth_user`
-- `_auth_pass`
-
-When `_auth` is present on the connection string user authentication will be enabled and the provided user will be created
-as an `admin` user. After initial creation, the parameter `_auth` has no effect anymore and can be omitted from the connection string.
-
-Example connection string:
-
-Create an user authentication database with user `admin` and password `admin`.
-
-`file:test.s3db?_auth&_auth_user=admin&_auth_pass=admin`
-
-Create an user authentication database with user `admin` and password `admin` and use `SHA1` for the password encoding.
-
-`file:test.s3db?_auth&_auth_user=admin&_auth_pass=admin&_auth_crypt=sha1`
-
-### Password Encoding
-
-The passwords within the user authentication module of SQLite are encoded with the SQLite function `sqlite_cryp`.
-This function uses a ceasar-cypher which is quite insecure.
-This library provides several additional password encoders which can be configured through the connection string.
-
-The password cypher can be configured with the key `_auth_crypt`. And if the configured password encoder also requires an
-salt this can be configured with `_auth_salt`.
-
-#### Available Encoders
-
-- SHA1
-- SSHA1 (Salted SHA1)
-- SHA256
-- SSHA256 (salted SHA256)
-- SHA384
-- SSHA384 (salted SHA384)
-- SHA512
-- SSHA512 (salted SHA512)
-
-### Restrictions
-
-Operations on the database regarding to user management can only be preformed by an administrator user.
-
-### Support
-
-The user authentication supports two kinds of users
-
-- administrators
-- regular users
-
-### User Management
-
-User management can be done by directly using the `*SQLiteConn` or by SQL.
-
-#### SQL
-
-The following sql functions are available for user management.
-
-| Function | Arguments | Description |
-|----------|-----------|-------------|
-| `authenticate` | username `string`, password `string` | Will authenticate an user, this is done by the connection; and should not be used manually. |
-| `auth_user_add` | username `string`, password `string`, admin `int` | This function will add an user to the database.<br>if the database is not protected by user authentication it will enable it. Argument `admin` is an integer identifying if the added user should be an administrator. Only Administrators can add administrators. |
-| `auth_user_change` | username `string`, password `string`, admin `int` | Function to modify an user. Users can change their own password, but only an administrator can change the administrator flag. |
-| `authUserDelete` | username `string` | Delete an user from the database. Can only be used by an administrator. The current logged in administrator cannot be deleted. This is to make sure their is always an administrator remaining. |
-
-These functions will return an integer.
-
-- 0 (SQLITE_OK)
-- 23 (SQLITE_AUTH) Failed to perform due to authentication or insufficient privileges
-
-##### Examples
-
-```sql
-// Autheticate user
-// Create Admin User
-SELECT auth_user_add('admin2', 'admin2', 1);
-
-// Change password for user
-SELECT auth_user_change('user', 'userpassword', 0);
-
-// Delete user
-SELECT user_delete('user');
-```
-
-#### *SQLiteConn
-
-The following functions are available for User authentication from the `*SQLiteConn`.
-
-| Function | Description |
-|----------|-------------|
-| `Authenticate(username, password string) error` | Authenticate user |
-| `AuthUserAdd(username, password string, admin bool) error` | Add user |
-| `AuthUserChange(username, password string, admin bool) error` | Modify user |
-| `AuthUserDelete(username string) error` | Delete user |
-
-### Attached database
-
-When using attached databases. SQLite will use the authentication from the `main` database for the attached database(s).
-
-# Extensions
-
-If you want your own extension to be listed here or you want to add a reference to an extension; please submit an Issue for this.
-
-## Spatialite
-
-Spatialite is available as an extension to SQLite, and can be used in combination with this repository.
-For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatialite).
-
 # FAQ
 
 - Getting insert error while query is opened.
@@ -453,19 +313,14 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
 
     Yes for readonly. But, No for writable. See [#50](https://github.com/mattn/go-sqlite3/issues/50), [#51](https://github.com/mattn/go-sqlite3/issues/51), [#209](https://github.com/mattn/go-sqlite3/issues/209), [#274](https://github.com/mattn/go-sqlite3/issues/274).
 
-- Why I'm getting `no such table` error?
-
-    Why is it racy if I use a `sql.Open("sqlite3", ":memory:")` database?
+- Why is it racy if I use a `sql.Open("sqlite3", ":memory:")` database?
 
     Each connection to :memory: opens a brand new in-memory sql database, so if
     the stdlib's sql engine happens to open another connection and you've only
     specified ":memory:", that connection will see a brand new database. A
     workaround is to use "file::memory:?mode=memory&cache=shared". Every
-    connection to this string will point to the same in-memory database. 
-    
-    For more information see
-    * [#204](https://github.com/mattn/go-sqlite3/issues/204)
-    * [#511](https://github.com/mattn/go-sqlite3/issues/511)
+    connection to this string will point to the same in-memory database. See
+    [#204](https://github.com/mattn/go-sqlite3/issues/204) for more info.
 
 - Reading from database with large amount of goroutines fails on OSX.
 
@@ -473,7 +328,7 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
 
     For more information see [#289](https://github.com/mattn/go-sqlite3/issues/289)
 
-- Trying to execute a `.` (dot) command throws an error.
+- Trying to execure a `.` (dot) command throws an error.
 
     Error: `Error: near ".": syntax error`
     Dot command are part of SQLite3 CLI not of this library.
@@ -482,28 +337,9 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
 
     More infomation see [#305](https://github.com/mattn/go-sqlite3/issues/305)
 
-- Error: `database is locked`
-
-    When you get an database is locked. Please use the following options.
-
-    Add to DSN: `cache=shared`
-
-    Example:
-    ```go
-    db, err := sql.Open("sqlite3", "file:locked.sqlite?cache=shared")
-    ```
-
-    Second please set the database connections of the SQL package to 1.
-    
-    ```go
-    db.SetMaxOpenConn(1)
-    ```
-
-    More information see [#209](https://github.com/mattn/go-sqlite3/issues/209)
-
 # License
 
-MIT: http://mattn.mit-license.org/2018
+MIT: http://mattn.mit-license.org/2012
 
 sqlite3-binding.c, sqlite3-binding.h, sqlite3ext.h
 
@@ -514,5 +350,3 @@ In this repository, those files are an amalgamation of code that was copied from
 # Author
 
 Yasuhiro Matsumoto (a.k.a mattn)
-
-G.J.R. Timmer

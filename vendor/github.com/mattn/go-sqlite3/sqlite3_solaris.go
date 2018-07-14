@@ -9,6 +9,5 @@ package sqlite3
 
 /*
 #cgo CFLAGS: -D__EXTENSIONS__=1
-#cgo LDFLAGS: -lc
 */
 import "C"
