@@ -5,13 +5,13 @@ import (
 )
 
 type Message struct {
-	Delivered bool
-	FromMe    bool
-	Text      string
-	Time      time.Time
+	Delivered bool      `json:"delivered"`
+	FromMe    bool      `json:"fromMe"`
+	Text      string    `json:"text"`
+	Time      time.Time `json:"time"`
 }
 
 type Chat struct {
-	Id          int
-	DisplayName string
+	Id          int    `json:"id"`
+	DisplayName string `json:"displayName"`
 }
