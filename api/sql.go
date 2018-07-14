@@ -11,7 +11,7 @@ import (
 func runSQL(query string, args ...interface{}) (*sql.Rows, error) {
 	db, err := sql.Open(
 		"sqlite3",
-		path.Join(os.Getenv("HOME"), "Library/Messages/chat.db"),
+		path.Join(os.Getenv("HOME"), "Library/Messages/chat.db?mode=ro"),
 	)
 	if err != nil {
 		return nil, err
