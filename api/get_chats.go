@@ -2,10 +2,14 @@ package api
 
 func GetChats() ([]Chat, error) {
 	rows, err := runSQL(`
-		SELECT chat.ROWID, display_name, handle.id
+		SELECT chat.ROWID, display_name, handle.id, MAX(message.date) as last_activity
 		FROM chat
 		LEFT JOIN chat_handle_join ON chat.ROWID = chat_handle_join.chat_id
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID
+		LEFT JOIN chat_message_join ON chat_message_join.chat_id = chat.ROWID
+		LEFT JOIN message ON chat_message_join.message_id = message.ROWID
+		GROUP BY chat.ROWID
+		ORDER BY last_activity DESC
 	`)
 	if err != nil {
 		return []Chat{}, err
@@ -18,7 +22,8 @@ func GetChats() ([]Chat, error) {
 		var id int
 		var displayName string
 		var handleId string
-		err = rows.Scan(&id, &displayName, &handleId)
+		var lastActivity int
+		err = rows.Scan(&id, &displayName, &handleId, &lastActivity)
 		if err != nil {
 			return []Chat{}, err
 		}
@@ -26,8 +31,9 @@ func GetChats() ([]Chat, error) {
 			displayName = handleId
 		}
 		chats = append(chats, Chat{
-			Id:          id,
-			DisplayName: displayName,
+			Id:           id,
+			DisplayName:  displayName,
+			LastActivity: cocoaTimestampToTime(lastActivity),
 		})
 	}
 	return chats, nil

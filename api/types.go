@@ -12,6 +12,7 @@ type Message struct {
 }
 
 type Chat struct {
-	Id          int    `json:"id"`
-	DisplayName string `json:"displayName"`
+	Id           int       `json:"id"`
+	DisplayName  string    `json:"displayName"`
+	LastActivity time.Time `json:"lastActivity"`
 }
