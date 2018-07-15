@@ -5,6 +5,7 @@ import (
 )
 
 type Message struct {
+	Id        int       `json:"id"`
 	Delivered bool      `json:"delivered"`
 	FromMe    bool      `json:"fromMe"`
 	Text      string    `json:"text"`

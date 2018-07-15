@@ -33,6 +33,26 @@ func main() {
 		return
 	}
 
+	if command == "get-attachments" {
+		messageId, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		attachments, err := api.GetAttachments(messageId)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json, err := json.Marshal(attachments)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(string(json))
+		return
+	}
+
 	if command == "get-chats" {
 		chats, err := api.GetChats()
 		if err != nil {
