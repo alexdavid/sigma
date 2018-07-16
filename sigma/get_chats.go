@@ -1,4 +1,4 @@
-package api
+package sigma
 
 func GetChats() ([]Chat, error) {
 	rows, err := runSQL(`

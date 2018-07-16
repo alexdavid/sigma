@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/alexdavid/sigma/api"
+	"github.com/alexdavid/sigma/sigma"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		messages, err := api.GetMessages(chatId, time.Now().Add(time.Hour*-80))
+		messages, err := sigma.GetMessages(chatId, time.Now().Add(time.Hour*-80))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -39,7 +39,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		attachments, err := api.GetAttachments(messageId)
+		attachments, err := sigma.GetAttachments(messageId)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	if command == "get-chats" {
-		chats, err := api.GetChats()
+		chats, err := sigma.GetChats()
 		if err != nil {
 			log.Fatal(err)
 		}
