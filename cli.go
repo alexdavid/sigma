@@ -19,12 +19,12 @@ func main() {
 			log.Fatal(err)
 		}
 
-		chats, err := api.GetMessages(chatId, time.Now().Add(time.Hour*-80))
+		messages, err := api.GetMessages(chatId, time.Now().Add(time.Hour*-80))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		json, err := json.Marshal(chats)
+		json, err := json.Marshal(messages)
 		if err != nil {
 			log.Fatal(err)
 		}
