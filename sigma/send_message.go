@@ -16,10 +16,10 @@ func SendMessage(chatId int, message string) error {
 
 // Modified from https://github.com/bboyairwreck/PieMessage
 const applescript = `
-on run {msgText, handle}
+on run {msgText, handleId}
 	tell application "Messages"
-		set serviceID to id of 1st service whose service type = iMessage
-		send msgText to buddy handle of service id serviceID
+		set serviceId to id of 1st service whose service type = iMessage
+		send msgText to buddy handleId of service id serviceId
 	end tell
 end run
 `
