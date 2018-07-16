@@ -13,6 +13,20 @@ import (
 
 func main() {
 	command := os.Args[1]
+	if command == "send-message" {
+		chatId, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatal(err)
+		}
+		message := os.Args[3]
+
+		err = sigma.SendMessage(chatId, message)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
 	if command == "get-messages" {
 		chatId, err := strconv.Atoi(os.Args[2])
 		if err != nil {
