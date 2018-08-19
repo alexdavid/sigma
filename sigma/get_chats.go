@@ -1,8 +1,10 @@
 package sigma
 
+import "time"
+
 func GetChats() ([]Chat, error) {
 	rows, err := runSQL(`
-		SELECT chat.ROWID, display_name, handle.id, MAX(message.date) as last_activity
+		SELECT chat.ROWID, display_name, handle.id, COALESCE(MAX(message.date),0) as last_activity
 		FROM chat
 		LEFT JOIN chat_handle_join ON chat.ROWID = chat_handle_join.chat_id
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID
@@ -30,10 +32,14 @@ func GetChats() ([]Chat, error) {
 		if displayName == "" {
 			displayName = handleId
 		}
+		var lastActivityTime time.Time
+		if lastActivity > 0 {
+			lastActivityTime = cocoaTimestampToTime(lastActivity)
+		}
 		chats = append(chats, Chat{
 			Id:           id,
 			DisplayName:  displayName,
-			LastActivity: cocoaTimestampToTime(lastActivity),
+			LastActivity: lastActivityTime,
 		})
 	}
 	return chats, nil
