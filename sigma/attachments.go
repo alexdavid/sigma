@@ -5,7 +5,7 @@ import (
 	"path"
 )
 
-func GetAttachments(messageId int) ([]string, error) {
+func Attachments(messageId int) ([]string, error) {
 	rows, err := runSQL(`
 		SELECT attachment.filename
 		FROM attachment

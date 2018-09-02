@@ -2,7 +2,7 @@ package sigma
 
 import "time"
 
-func GetChats() ([]Chat, error) {
+func Chats() ([]Chat, error) {
 	rows, err := runSQL(`
 		SELECT chat.ROWID, display_name, handle.id, COALESCE(MAX(message.date),0) as last_activity
 		FROM chat
