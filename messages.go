@@ -1,15 +1,11 @@
 package sigma
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
-type MessagesQuery struct {
-	ChatId   int
-	BeforeId int
-	Limit    int
-}
-
-func Messages(query MessagesQuery) ([]Message, error) {
-	rows, err := normalizeMessagesQuery(query)
+func (c *realClient) Messages(query MessagesQuery) ([]Message, error) {
+	rows, err := c.normalizeMessagesQuery(query)
 	if err != nil {
 		return []Message{}, err
 	}
@@ -53,19 +49,19 @@ const queryEnd = `
   LIMIT ?
 `
 
-func normalizeMessagesQuery(query MessagesQuery) (*sql.Rows, error) {
+func (c *realClient) normalizeMessagesQuery(query MessagesQuery) (*sql.Rows, error) {
 	if query.Limit == 0 {
 		query.Limit = 20
 	}
 	if query.BeforeId != 0 {
-		return runSQL(
+		return c.runSQL(
 			queryStart+queryHasBeforeId+queryEnd,
 			query.ChatId,
 			query.BeforeId,
 			query.Limit,
 		)
 	}
-	return runSQL(
+	return c.runSQL(
 		queryStart+queryEnd,
 		query.ChatId,
 		query.Limit,

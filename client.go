@@ -8,7 +8,11 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func runSQL(query string, args ...interface{}) (*sql.Rows, error) {
+type realClient struct {
+	db *sql.DB
+}
+
+func NewClient() (Client, error) {
 	db, err := sql.Open(
 		"sqlite3",
 		path.Join(os.Getenv("HOME"), "Library/Messages/chat.db?mode=ro"),
@@ -16,14 +20,22 @@ func runSQL(query string, args ...interface{}) (*sql.Rows, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
+	return &realClient{
+		db: db,
+	}, nil
+}
 
+func (c *realClient) Close() {
+	c.db.Close()
+}
+
+func (c *realClient) runSQL(query string, args ...interface{}) (*sql.Rows, error) {
 	if len(args) == 0 {
-		rows, err := db.Query(query)
+		rows, err := c.db.Query(query)
 		return rows, err
 	}
 
-	stmt, err := db.Prepare(query)
+	stmt, err := c.db.Prepare(query)
 	if err != nil {
 		return nil, err
 	}

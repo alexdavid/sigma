@@ -1,9 +1,11 @@
 package sigma
 
-import "time"
+import (
+	"time"
+)
 
-func Chats() ([]Chat, error) {
-	rows, err := runSQL(`
+func (c *realClient) Chats() ([]Chat, error) {
+	rows, err := c.runSQL(`
 		SELECT chat.ROWID, display_name, handle.id, COALESCE(MAX(message.date),0) as last_activity
 		FROM chat
 		LEFT JOIN chat_handle_join ON chat.ROWID = chat_handle_join.chat_id

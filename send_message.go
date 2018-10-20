@@ -5,8 +5,8 @@ import (
 	"os/exec"
 )
 
-func SendMessage(chatId int, message string) error {
-	handleId, serviceId, err := getHandleAndServiceId(chatId)
+func (c *realClient) SendMessage(chatId int, message string) error {
+	handleId, serviceId, err := c.getHandleAndServiceId(chatId)
 	if err != nil {
 		return err
 	}
@@ -24,8 +24,8 @@ end run
 `
 
 // Applescript needs the message handle & service id so look it up:
-func getHandleAndServiceId(chatId int) (handleId string, serviceId string, err error) {
-	rows, err := runSQL(`
+func (c *realClient) getHandleAndServiceId(chatId int) (handleId string, serviceId string, err error) {
+	rows, err := c.runSQL(`
 		SELECT handle.id, chat.account_id
 		FROM chat_handle_join
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID

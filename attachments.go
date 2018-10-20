@@ -5,8 +5,8 @@ import (
 	"path"
 )
 
-func Attachments(messageId int) ([]string, error) {
-	rows, err := runSQL(`
+func (c *realClient) Attachments(messageId int) ([]string, error) {
+	rows, err := c.runSQL(`
 		SELECT attachment.filename
 		FROM attachment
 		LEFT JOIN message_attachment_join ON attachment.ROWID = message_attachment_join.attachment_id
