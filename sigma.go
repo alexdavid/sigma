@@ -5,11 +5,11 @@ import (
 )
 
 type Client interface {
-	Attachments(int) ([]string, error)
+	Attachments(messageId int) ([]string, error)
 	Chats() ([]Chat, error)
 	Close()
 	Messages(MessagesQuery) ([]Message, error)
-	SendMessage(int, string) error
+	SendMessage(chatId int, message string) error
 }
 
 type Message struct {
