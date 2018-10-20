@@ -28,10 +28,15 @@ func (c *mockClient) Attachments(messageId int) ([]string, error) {
 func (c *mockClient) Chats() ([]sigma.Chat, error) {
 	results := []sigma.Chat{}
 	for chatId := range c.chats {
+		var lastActivity time.Time
+		messages := c.chats[chatId]
+		if len(messages) > 0 {
+			lastActivity = messages[len(messages)-1].Time
+		}
 		results = append(results, sigma.Chat{
 			Id:           chatId,
 			DisplayName:  fmt.Sprintf("Chat %d", chatId),
-			LastActivity: c.chats[chatId][len(c.chats[chatId])-1].Time,
+			LastActivity: lastActivity,
 		})
 	}
 	return results, nil
