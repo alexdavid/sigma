@@ -6,43 +6,43 @@ import (
 )
 
 func SendMessage(chatId int, message string) error {
-	handleId, err := getHandleIdFromChatId(chatId)
+	handleId, serviceId, err := getHandleAndServiceId(chatId)
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("osascript", "-e", applescript, message, handleId)
+	cmd := exec.Command("osascript", "-e", applescript, message, handleId, serviceId)
 	return cmd.Run()
 }
 
 // Modified from https://github.com/bboyairwreck/PieMessage
 const applescript = `
-on run {msgText, handleId}
+on run {msgText, handleId, serviceId}
 	tell application "Messages"
-		set serviceId to id of 1st service whose service type = iMessage
 		send msgText to buddy handleId of service id serviceId
 	end tell
 end run
 `
 
-// Applescript needs the message handle id so look it up:
-func getHandleIdFromChatId(chatId int) (string, error) {
+// Applescript needs the message handle & service id so look it up:
+func getHandleAndServiceId(chatId int) (handleId string, serviceId string, err error) {
 	rows, err := runSQL(`
-		SELECT handle.id
+		SELECT handle.id, chat.account_id
 		FROM chat_handle_join
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID
+    LEFT JOIN chat ON chat.ROWID = chat_id
 		WHERE chat_id = ?
 	`, chatId)
 	if err != nil {
-		return "", err
+		return
 	}
 	defer rows.Close()
 
 	found := rows.Next()
 	if !found {
-		return "", fmt.Errorf("Could not find handle of chat %d", chatId)
+		err = fmt.Errorf("Could not find handle of chat %d", chatId)
+		return
 	}
 
-	var handeId string
-	err = rows.Scan(&handeId)
-	return handeId, err
+	err = rows.Scan(&handleId, &serviceId)
+	return
 }
