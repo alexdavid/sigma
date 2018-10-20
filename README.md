@@ -12,11 +12,17 @@ Instead, see one of the pre-built frontends:
 * [Sigma-Web](https://github.com/alexdavid/sigma-web)
 * Sigma-weechat (I'll get around to building this one day)
 
-To write your own frontend see [GoDoc here](https://godoc.org/github.com/alexdavid/sigma/sigma).
+To write your own frontend see [GoDoc here](https://godoc.org/github.com/alexdavid/sigma).
 Note: Sigma is still in very early development and the API *may* change, but probably won't.
 
 ## Requirements
-This library requires an Apple computer running MacOS 10.12 or later.
+The sigma package requires an Apple computer running MacOS 10.12 or later with Messages signed
+into an iMessage account to work.
+
+If you want to develop a frontend without this requirement
+you can use the [`mock.NewClient`](https://godoc.org/github.com/alexdavid/sigma/mock#NewClient)
+which returns the same [Client interface](https://godoc.org/github.com/alexdavid/sigma#Client)
+that [`sigma.NewClient`](https://godoc.org/github.com/alexdavid/sigma#NewClient) returns.
 
 
 ## Alternatives
