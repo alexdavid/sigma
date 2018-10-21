@@ -13,12 +13,33 @@ type mockClient struct {
 }
 
 func NewClient() (sigma.Client, error) {
-	return &mockClient{
-		lastId: 1,
-		chats: map[int][]sigma.Message{
-			1: {},
-		},
-	}, nil
+	c := &mockClient{
+		lastId: 0,
+		chats:  map[int][]sigma.Message{},
+	}
+
+	for chatId, mockThread := range mockChats {
+		for _, message := range mockThread {
+			c.appendMessageToChat(chatId+1, message)
+		}
+	}
+
+	return c, nil
+}
+
+func (c *mockClient) appendMessageToChat(chatId int, template sigma.Message) {
+	messages, ok := c.chats[chatId]
+	if !ok {
+		messages = []sigma.Message{}
+	}
+	c.lastId++
+	c.chats[chatId] = append(messages, sigma.Message{
+		Id:        c.lastId,
+		FromMe:    template.FromMe,
+		Text:      template.Text,
+		Time:      time.Now(),
+		Delivered: true,
+	})
 }
 
 func (c *mockClient) Attachments(messageId int) ([]string, error) {
@@ -54,17 +75,12 @@ func (c *mockClient) Messages(query sigma.MessagesQuery) ([]sigma.Message, error
 }
 
 func (c *mockClient) SendMessage(chatId int, message string) error {
-	messages, ok := c.chats[chatId]
+	_, ok := c.chats[chatId]
 	if !ok {
 		return fmt.Errorf("Chat id %d doesn't exist", chatId)
 	}
-	c.lastId++
-	c.chats[chatId] = append(messages, sigma.Message{
-		Id:        c.lastId,
-		FromMe:    true,
-		Text:      message,
-		Time:      time.Now(),
-		Delivered: true,
-	})
+	// Emulate a delay since applescript is slow to send
+	time.Sleep(800 * time.Millisecond)
+	c.appendMessageToChat(chatId, sigma.Message{Text: message, FromMe: true})
 	return nil
 }
