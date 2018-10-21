@@ -8,42 +8,51 @@ import (
 )
 
 type mockClient struct {
-	lastId int
-	chats  map[int][]sigma.Message
+	lastId      int
+	chats       map[int][]sigma.Message
+	attachments map[int][]string
 }
 
 func NewClient() (sigma.Client, error) {
 	c := &mockClient{
-		lastId: 0,
-		chats:  map[int][]sigma.Message{},
+		lastId:      0,
+		chats:       map[int][]sigma.Message{},
+		attachments: map[int][]string{},
 	}
 
-	for chatId, mockThread := range mockChats {
+	for chatId, mockThread := range getMockChats() {
 		for _, message := range mockThread {
-			c.appendMessageToChat(chatId+1, message)
+			messageId := c.appendMessageToChat(chatId+1, sigma.Message{
+				FromMe: message.FromMe,
+				Text:   message.Text,
+			})
+			c.attachments[messageId] = message.Attachments
 		}
 	}
 
 	return c, nil
 }
 
-func (c *mockClient) appendMessageToChat(chatId int, template sigma.Message) {
+func (c *mockClient) appendMessageToChat(chatId int, template sigma.Message) (messageId int) {
 	messages, ok := c.chats[chatId]
 	if !ok {
 		messages = []sigma.Message{}
 	}
 	c.lastId++
+	messageId = c.lastId
 	c.chats[chatId] = append(messages, sigma.Message{
-		Id:        c.lastId,
+		Id:        messageId,
 		FromMe:    template.FromMe,
 		Text:      template.Text,
 		Time:      time.Now(),
 		Delivered: true,
 	})
+	return
 }
 
 func (c *mockClient) Attachments(messageId int) ([]string, error) {
-	return []string{}, nil
+	attachments := c.attachments[messageId]
+	return attachments, nil
 }
 
 func (c *mockClient) Chats() ([]sigma.Chat, error) {
@@ -63,8 +72,7 @@ func (c *mockClient) Chats() ([]sigma.Chat, error) {
 	return results, nil
 }
 
-func (c *mockClient) Close() {
-}
+func (c *mockClient) Close() {}
 
 func (c *mockClient) Messages(query sigma.MessagesQuery) ([]sigma.Message, error) {
 	messages, ok := c.chats[query.ChatId]
