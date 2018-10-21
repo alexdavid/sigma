@@ -1,6 +1,8 @@
 # sigma
 A stable Golang API for MacOS Messages app.
 
+[![GoDoc](https://godoc.org/github.com/alexdavid/sigma?status.svg)](https://godoc.org/github.com/alexdavid/sigma)
+
 ---
 I built sigma mostly for myself to be able to send and receive messages from Linux.
 It is purely a Go library to abstract any future breakages Apple might make and provide
