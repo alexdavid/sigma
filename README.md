@@ -32,5 +32,4 @@ that [`sigma.NewClient`](https://godoc.org/github.com/alexdavid/sigma#NewClient)
   
 ## Todo
   - [ ] Look into better display name handling if a contact exists in address book
-  - [ ] Test sigma on newer versions of MacOS (only has been tested on 10.12)
   - [ ] Create [weechat](https://weechat.org/) integration
