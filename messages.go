@@ -15,7 +15,7 @@ func (c *realClient) Messages(query MessagesQuery) ([]Message, error) {
 
 	for rows.Next() {
 		var id int
-		var timestamp int
+		var timestamp int64
 		var text string
 		var isSent bool
 		var isFromMe bool

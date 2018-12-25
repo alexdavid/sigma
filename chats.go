@@ -26,7 +26,7 @@ func (c *realClient) Chats() ([]Chat, error) {
 		var id int
 		var displayName string
 		var handleId string
-		var lastActivity int
+		var lastActivity int64
 		err = rows.Scan(&id, &displayName, &handleId, &lastActivity)
 		if err != nil {
 			return []Chat{}, err
