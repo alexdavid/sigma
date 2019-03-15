@@ -9,7 +9,8 @@ import (
 )
 
 type realClient struct {
-	db *sql.DB
+	db       *sql.DB
+	contacts map[string]string
 }
 
 func NewClient() (Client, error) {
@@ -20,8 +21,16 @@ func NewClient() (Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	contacts, err := getContactMap()
+	if err != nil {
+		os.Stderr.WriteString("Failed to fetch contacts")
+		os.Stderr.WriteString(err.Error())
+	}
+
 	return &realClient{
-		db: db,
+		db:       db,
+		contacts: contacts,
 	}, nil
 }
 
