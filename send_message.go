@@ -5,12 +5,12 @@ import (
 	"os/exec"
 )
 
-func (c *realClient) SendMessage(chatId int, message string) error {
-	handleId, serviceId, err := c.getHandleAndServiceId(chatId)
+func (c *realClient) SendMessage(chatID int, message string) error {
+	handleID, serviceID, err := c.getHandleAndServiceID(chatID)
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("osascript", "-e", applescript, message, handleId, serviceId)
+	cmd := exec.Command("osascript", "-e", applescript, message, handleID, serviceID)
 	return cmd.Run()
 }
 
@@ -24,14 +24,14 @@ end run
 `
 
 // Applescript needs the message handle & service id so look it up:
-func (c *realClient) getHandleAndServiceId(chatId int) (handleId string, serviceId string, err error) {
+func (c *realClient) getHandleAndServiceID(chatID int) (handleID string, serviceID string, err error) {
 	rows, err := c.runSQL(`
 		SELECT handle.id, chat.account_id
 		FROM chat_handle_join
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID
     LEFT JOIN chat ON chat.ROWID = chat_id
 		WHERE chat_id = ?
-	`, chatId)
+	`, chatID)
 	if err != nil {
 		return
 	}
@@ -39,10 +39,10 @@ func (c *realClient) getHandleAndServiceId(chatId int) (handleId string, service
 
 	found := rows.Next()
 	if !found {
-		err = fmt.Errorf("Could not find handle of chat %d", chatId)
+		err = fmt.Errorf("Could not find handle of chat %d", chatID)
 		return
 	}
 
-	err = rows.Scan(&handleId, &serviceId)
+	err = rows.Scan(&handleID, &serviceID)
 	return
 }

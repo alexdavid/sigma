@@ -4,8 +4,8 @@ import (
 	"database/sql"
 )
 
-func (c *realClient) Messages(query MessagesQuery) ([]Message, error) {
-	rows, err := c.normalizeMessagesQuery(query)
+func (c *realClient) Messages(chatID int, query MessageFilter) ([]Message, error) {
+	rows, err := c.normalizeMessagesQuery(chatID, query)
 	if err != nil {
 		return []Message{}, err
 	}
@@ -24,7 +24,7 @@ func (c *realClient) Messages(query MessagesQuery) ([]Message, error) {
 			return []Message{}, err
 		}
 		messages = append(messages, Message{
-			Id:        id,
+			ID:        id,
 			Time:      cocoaTimestampToTime(timestamp),
 			Text:      text,
 			Delivered: isSent,
@@ -41,7 +41,7 @@ const queryStart = `
   LEFT JOIN chat_message_join ON message.ROWID = chat_message_join.message_id
   WHERE chat_message_join.chat_id = ?
 `
-const queryHasBeforeId = `
+const queryHasBeforeID = `
   AND message.ROWID < ?
 `
 const queryEnd = `
@@ -49,21 +49,12 @@ const queryEnd = `
   LIMIT ?
 `
 
-func (c *realClient) normalizeMessagesQuery(query MessagesQuery) (*sql.Rows, error) {
+func (c *realClient) normalizeMessagesQuery(chatID int, query MessageFilter) (*sql.Rows, error) {
 	if query.Limit == 0 {
 		query.Limit = 20
 	}
-	if query.BeforeId != 0 {
-		return c.runSQL(
-			queryStart+queryHasBeforeId+queryEnd,
-			query.ChatId,
-			query.BeforeId,
-			query.Limit,
-		)
+	if query.BeforeID != 0 {
+		return c.runSQL(queryStart+queryHasBeforeID+queryEnd, chatID, query.BeforeID, query.Limit)
 	}
-	return c.runSQL(
-		queryStart+queryEnd,
-		query.ChatId,
-		query.Limit,
-	)
+	return c.runSQL(queryStart+queryEnd, chatID, query.Limit)
 }

@@ -25,21 +25,21 @@ func (c *realClient) Chats() ([]Chat, error) {
 	for rows.Next() {
 		var id int
 		var displayName string
-		var handleId string
+		var handleID string
 		var lastActivity int64
-		err = rows.Scan(&id, &displayName, &handleId, &lastActivity)
+		err = rows.Scan(&id, &displayName, &handleID, &lastActivity)
 		if err != nil {
 			return []Chat{}, err
 		}
 		if displayName == "" {
-			displayName = handleId
+			displayName = handleID
 		}
 		var lastActivityTime time.Time
 		if lastActivity > 0 {
 			lastActivityTime = cocoaTimestampToTime(lastActivity)
 		}
 		chats = append(chats, Chat{
-			Id:           id,
+			ID:           id,
 			DisplayName:  displayName,
 			LastActivity: lastActivityTime,
 		})

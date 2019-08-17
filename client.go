@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	// sqlite3 required to parse messages database
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -12,6 +13,8 @@ type realClient struct {
 	db *sql.DB
 }
 
+// NewClient creates a new sigma client
+// This function can only be called on MacOS with an iMessage account attached to the Messages app
 func NewClient() (Client, error) {
 	db, err := sql.Open(
 		"sqlite3",

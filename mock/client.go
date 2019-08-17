@@ -8,40 +8,41 @@ import (
 )
 
 type mockClient struct {
-	lastId      int
+	lastID      int
 	chats       map[int][]sigma.Message
 	attachments map[int][]string
 }
 
+// NewClient creates a new mock client for testing or building sigma frontends on non-MacOS systems
 func NewClient() (sigma.Client, error) {
 	c := &mockClient{
-		lastId:      0,
+		lastID:      0,
 		chats:       map[int][]sigma.Message{},
 		attachments: map[int][]string{},
 	}
 
-	for chatId, mockThread := range getMockChats() {
+	for chatID, mockThread := range getMockChats() {
 		for _, message := range mockThread {
-			messageId := c.appendMessageToChat(chatId+1, sigma.Message{
+			messageID := c.appendMessageToChat(chatID+1, sigma.Message{
 				FromMe: message.FromMe,
 				Text:   message.Text,
 			})
-			c.attachments[messageId] = message.Attachments
+			c.attachments[messageID] = message.Attachments
 		}
 	}
 
 	return c, nil
 }
 
-func (c *mockClient) appendMessageToChat(chatId int, template sigma.Message) (messageId int) {
-	messages, ok := c.chats[chatId]
+func (c *mockClient) appendMessageToChat(chatID int, template sigma.Message) (messageID int) {
+	messages, ok := c.chats[chatID]
 	if !ok {
 		messages = []sigma.Message{}
 	}
-	c.lastId++
-	messageId = c.lastId
-	c.chats[chatId] = append(messages, sigma.Message{
-		Id:        messageId,
+	c.lastID++
+	messageID = c.lastID
+	c.chats[chatID] = append(messages, sigma.Message{
+		ID:        messageID,
 		FromMe:    template.FromMe,
 		Text:      template.Text,
 		Time:      time.Now(),
@@ -50,22 +51,22 @@ func (c *mockClient) appendMessageToChat(chatId int, template sigma.Message) (me
 	return
 }
 
-func (c *mockClient) Attachments(messageId int) ([]string, error) {
-	attachments := c.attachments[messageId]
+func (c *mockClient) Attachments(messageID int) ([]string, error) {
+	attachments := c.attachments[messageID]
 	return attachments, nil
 }
 
 func (c *mockClient) Chats() ([]sigma.Chat, error) {
 	results := []sigma.Chat{}
-	for chatId := range c.chats {
+	for chatID := range c.chats {
 		var lastActivity time.Time
-		messages := c.chats[chatId]
+		messages := c.chats[chatID]
 		if len(messages) > 0 {
 			lastActivity = messages[len(messages)-1].Time
 		}
 		results = append(results, sigma.Chat{
-			Id:           chatId,
-			DisplayName:  fmt.Sprintf("Chat %d", chatId),
+			ID:           chatID,
+			DisplayName:  fmt.Sprintf("Chat %d", chatID),
 			LastActivity: lastActivity,
 		})
 	}
@@ -74,21 +75,21 @@ func (c *mockClient) Chats() ([]sigma.Chat, error) {
 
 func (c *mockClient) Close() {}
 
-func (c *mockClient) Messages(query sigma.MessagesQuery) ([]sigma.Message, error) {
-	messages, ok := c.chats[query.ChatId]
+func (c *mockClient) Messages(chatID int, filter sigma.MessageFilter) ([]sigma.Message, error) {
+	messages, ok := c.chats[chatID]
 	if !ok {
-		return []sigma.Message{}, fmt.Errorf("Chat id %d doesn't exist", query.ChatId)
+		return []sigma.Message{}, fmt.Errorf("Chat id %d doesn't exist", chatID)
 	}
 	return messages, nil
 }
 
-func (c *mockClient) SendMessage(chatId int, message string) error {
-	_, ok := c.chats[chatId]
+func (c *mockClient) SendMessage(chatID int, message string) error {
+	_, ok := c.chats[chatID]
 	if !ok {
-		return fmt.Errorf("Chat id %d doesn't exist", chatId)
+		return fmt.Errorf("Chat id %d doesn't exist", chatID)
 	}
 	// Emulate a delay since applescript is slow to send
 	time.Sleep(800 * time.Millisecond)
-	c.appendMessageToChat(chatId, sigma.Message{Text: message, FromMe: true})
+	c.appendMessageToChat(chatID, sigma.Message{Text: message, FromMe: true})
 	return nil
 }

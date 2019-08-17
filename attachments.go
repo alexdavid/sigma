@@ -5,13 +5,13 @@ import (
 	"path"
 )
 
-func (c *realClient) Attachments(messageId int) ([]string, error) {
+func (c *realClient) Attachments(messageID int) ([]string, error) {
 	rows, err := c.runSQL(`
 		SELECT attachment.filename
 		FROM attachment
 		LEFT JOIN message_attachment_join ON attachment.ROWID = message_attachment_join.attachment_id
 		WHERE message_attachment_join.message_id = ?
-	`, messageId)
+	`, messageID)
 	if err != nil {
 		return []string{}, err
 	}

@@ -4,30 +4,36 @@ import (
 	"time"
 )
 
+// Client interface represents a sigma client (either real or mock)
 type Client interface {
-	Attachments(messageId int) ([]string, error)
+	Attachments(messageID int) ([]string, error)
 	Chats() ([]Chat, error)
 	Close()
-	Messages(MessagesQuery) ([]Message, error)
-	SendMessage(chatId int, message string) error
+	Messages(chatID int, filter MessageFilter) ([]Message, error)
+	SendMessage(chatID int, message string) error
 }
 
+// Message is a single message in a chat
 type Message struct {
-	Id        int       `json:"id"`
+	ID        int       `json:"id"`
 	Delivered bool      `json:"delivered"`
 	FromMe    bool      `json:"fromMe"`
 	Text      string    `json:"text"`
 	Time      time.Time `json:"time"`
 }
 
+// Chat is an active conversation with another user
 type Chat struct {
-	Id           int       `json:"id"`
+	ID           int       `json:"id"`
 	DisplayName  string    `json:"displayName"`
 	LastActivity time.Time `json:"lastActivity"`
 }
 
-type MessagesQuery struct {
-	ChatId   int
-	BeforeId int
+// MessageFilter is used to help paginate message results
+//
+// BeforeID - (optional) get messages before the specified message id
+// Limit - the maximum number of messages to return
+type MessageFilter struct {
+	BeforeID int
 	Limit    int
 }
