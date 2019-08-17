@@ -1,7 +1,0 @@
-*.db
-*.exe
-*.dll
-*.o
-
-# VSCode
-.vscode
