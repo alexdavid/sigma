@@ -30,10 +30,7 @@ type Chat struct {
 }
 
 // MessageFilter is used to help paginate message results
-//
-// BeforeID - (optional) get messages before the specified message id
-// Limit - the maximum number of messages to return
 type MessageFilter struct {
-	BeforeID int
-	Limit    int
+	BeforeID int // (optional) get messages before the specified message id
+	Limit    int // the maximum number of messages to return
 }
