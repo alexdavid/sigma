@@ -6,7 +6,7 @@ import (
 
 func (c *realClient) Chats() ([]Chat, error) {
 	rows, err := c.runSQL(`
-		SELECT chat.ROWID, display_name, handle.id, COALESCE(MAX(message.date),0) as last_activity
+		SELECT chat.ROWID, COALESCE(NULLIF(display_name, ""), handle.id, "Unknown") as display_name, COALESCE(MAX(message.date),0) as last_activity
 		FROM chat
 		LEFT JOIN chat_handle_join ON chat.ROWID = chat_handle_join.chat_id
 		LEFT JOIN handle ON chat_handle_join.handle_id = handle.ROWID
@@ -25,14 +25,10 @@ func (c *realClient) Chats() ([]Chat, error) {
 	for rows.Next() {
 		var id int
 		var displayName string
-		var handleID string
 		var lastActivity int64
-		err = rows.Scan(&id, &displayName, &handleID, &lastActivity)
+		err = rows.Scan(&id, &displayName, &lastActivity)
 		if err != nil {
 			return []Chat{}, err
-		}
-		if displayName == "" {
-			displayName = handleID
 		}
 		var lastActivityTime time.Time
 		if lastActivity > 0 {
