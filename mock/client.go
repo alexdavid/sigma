@@ -2,6 +2,8 @@ package mock
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"time"
 
 	"github.com/alexdavid/sigma"
@@ -91,5 +93,27 @@ func (c *mockClient) SendMessage(chatID int, message string) error {
 	// Emulate a delay since applescript is slow to send
 	time.Sleep(800 * time.Millisecond)
 	c.appendMessageToChat(chatID, sigma.Message{Text: message, FromMe: true})
+	return nil
+}
+
+func (c *mockClient) SendMedia(chatID int, name string, data io.Reader) error {
+	_, ok := c.chats[chatID]
+	if !ok {
+		return fmt.Errorf("Chat id %d doesn't exist", chatID)
+	}
+
+	// Emulate a delay since applescript is slow to send
+	time.Sleep(800 * time.Millisecond)
+
+	tmpFile, err := ioutil.TempFile("", "*."+name)
+	if err != nil {
+		return err
+	}
+	if _, err = io.Copy(tmpFile, data); err != nil {
+		return err
+	}
+
+	messageID := c.appendMessageToChat(chatID, sigma.Message{Text: "", FromMe: true})
+	c.attachments[messageID] = []string{tmpFile.Name()}
 	return nil
 }

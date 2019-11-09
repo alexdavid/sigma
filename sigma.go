@@ -1,6 +1,7 @@
 package sigma
 
 import (
+	"io"
 	"time"
 )
 
@@ -11,6 +12,7 @@ type Client interface {
 	Close()
 	Messages(chatID int, filter MessageFilter) ([]Message, error)
 	SendMessage(chatID int, message string) error
+	SendMedia(chatID int, name string, data io.Reader) error
 }
 
 // Message is a single message in a chat
