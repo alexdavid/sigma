@@ -3,7 +3,7 @@ module github.com/alexdavid/sigma
 go 1.12
 
 require (
-	github.com/mattn/go-sqlite3 v1.11.0
+	github.com/mattn/go-sqlite3 v1.11.1-0.20191105054421-67c1376b46fb
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/lint v0.0.0-20190409202823-959b441ac422 // indirect
 	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
