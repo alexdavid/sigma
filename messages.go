@@ -2,7 +2,6 @@ package sigma
 
 import (
 	"database/sql"
-	"time"
 )
 
 func (c *realClient) Messages(chatID int, query MessageFilter) ([]Message, error) {
@@ -49,9 +48,8 @@ const queryEnd = `
   ORDER BY date DESC
   LIMIT ?
 `
-
-const queryDate = `
-  AND message.date > ?
+const queryHasAfterID = `
+  AND message.ROWID > ?
 `
 
 func (c *realClient) normalizeMessagesQuery(chatID int, query MessageFilter) (*sql.Rows, error) {
@@ -61,8 +59,8 @@ func (c *realClient) normalizeMessagesQuery(chatID int, query MessageFilter) (*s
 	if query.BeforeID != 0 {
 		return c.runSQL(queryStart+queryHasBeforeID+queryEnd, chatID, query.BeforeID, query.Limit)
 	}
-	if query.AfterTime.After(time.Unix(0, 0)) {
-		return c.runSQL(queryStart+queryDate+queryEnd, chatID, query.AfterTime.Format("2006-01-02"), query.Limit)
+	if query.AfterID != 0 {
+		return c.runSQL(queryStart+queryHasAfterID+queryEnd, chatID, query.AfterID, query.Limit)
 	}
 	return c.runSQL(queryStart+queryEnd, chatID, query.Limit)
 }
