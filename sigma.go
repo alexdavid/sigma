@@ -51,6 +51,7 @@ type Message struct {
 
 // MessageFilter is used to help paginate message results
 type MessageFilter struct {
+	AfterID  int //(optional) get messages after the specified message id
 	BeforeID int // (optional) get messages before the specified message id
 	Limit    int // the maximum number of messages to return
 }

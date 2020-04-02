@@ -48,6 +48,9 @@ const queryEnd = `
   ORDER BY date DESC
   LIMIT ?
 `
+const queryHasAfterID = `
+  AND message.ROWID > ?
+`
 
 func (c *realClient) normalizeMessagesQuery(chatID int, query MessageFilter) (*sql.Rows, error) {
 	if query.Limit == 0 {
@@ -55,6 +58,9 @@ func (c *realClient) normalizeMessagesQuery(chatID int, query MessageFilter) (*s
 	}
 	if query.BeforeID != 0 {
 		return c.runSQL(queryStart+queryHasBeforeID+queryEnd, chatID, query.BeforeID, query.Limit)
+	}
+	if query.AfterID != 0 {
+		return c.runSQL(queryStart+queryHasAfterID+queryEnd, chatID, query.AfterID, query.Limit)
 	}
 	return c.runSQL(queryStart+queryEnd, chatID, query.Limit)
 }
