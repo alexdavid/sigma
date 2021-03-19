@@ -12,7 +12,7 @@ a simple and consistent API.
 Sigma by itself is probably not very useful to you unless you want to build your own frontend.
 Instead, see one of the pre-built frontends:
 * [Sigma-Web](https://github.com/alexdavid/sigma-web)
-* Sigma-weechat (I'll get around to building this one day)
+* Sigma-matrix (I'll get around to building this one day)
 
 To write your own frontend see [GoDoc here](https://godoc.org/github.com/alexdavid/sigma).
 Note: Sigma is still in very early development and the API *may* change, but probably won't.
@@ -32,4 +32,4 @@ that [`sigma.NewClient`](https://godoc.org/github.com/alexdavid/sigma#NewClient)
   
 ## Todo
   - [ ] Look into better display name handling if a contact exists in address book
-  - [ ] Create [weechat](https://weechat.org/) integration
+  - [ ] Create [matrix bridge](https://matrix.org/bridges)
