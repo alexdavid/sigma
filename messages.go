@@ -16,7 +16,7 @@ func (c *realClient) Messages(chatID int, query MessageFilter) ([]Message, error
 	for rows.Next() {
 		var id int
 		var timestamp int64
-		var text string
+		var text sql.NullString
 		var isSent bool
 		var isFromMe bool
 		err = rows.Scan(&id, &timestamp, &text, &isSent, &isFromMe)
@@ -26,7 +26,7 @@ func (c *realClient) Messages(chatID int, query MessageFilter) ([]Message, error
 		messages = append(messages, Message{
 			ID:        id,
 			Time:      cocoaTimestampToTime(timestamp),
-			Text:      text,
+			Text:      text.String,
 			Delivered: isSent,
 			FromMe:    isFromMe,
 		})
